@@ -10,6 +10,7 @@ import me.cniekirk.realtimetrains.core.network.models.LocationLineUp
 internal fun LocationLineUp.toDepartureBoard(): DepartureBoard {
     val servicesMapped = services?.map { service ->
         DepartureBoardTrainService(
+            id = service.serviceUid ?: "",
             origin = service.locationDetail?.origin?.first()?.description ?: "",
             destination = service.locationDetail?.destination?.first()?.description ?: "",
             platform = service.locationDetail?.platform ?: "",

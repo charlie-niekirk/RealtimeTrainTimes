@@ -1,5 +1,7 @@
 package me.cniekirk.realtimetrains.root
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -21,8 +23,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import me.cniekirk.realtimetrains.feature.departureboard.DepartureBoard
 import me.cniekirk.realtimetrains.feature.departureboard.departureBoard
-import me.cniekirk.realtimetrains.feature.livetrains.LiveTrains
-import me.cniekirk.realtimetrains.feature.livetrains.liveTrains
+import me.cniekirk.realtimetrains.feature.stationsearch.LiveTrains
+import me.cniekirk.realtimetrains.feature.stationsearch.liveTrains
 
 sealed class TabDestination(val label: String, val route: Any, val icon: ImageVector) {
 
@@ -51,6 +53,7 @@ val tabs = listOf(
     TabDestination.Settings,
 )
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun RealTimeTrainsNavHost(navHostController: NavHostController) {
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
@@ -82,15 +85,20 @@ fun RealTimeTrainsNavHost(navHostController: NavHostController) {
             }
         }
     ) { paddingValues ->
-        NavHost(
-            modifier = Modifier.padding(paddingValues),
-            navController = navHostController,
-            startDestination = LiveTrains
-        ) {
-            liveTrains {  stationCrs, stationName ->
-                navHostController.navigate(DepartureBoard(stationCrs, stationName))
+        SharedTransitionLayout {
+            NavHost(
+                modifier = Modifier.padding(paddingValues),
+                navController = navHostController,
+                startDestination = me.cniekirk.realtimetrains.feature.stationsearch.LiveTrains
+            ) {
+                liveTrains {  stationCrs, stationName ->
+                    navHostController.navigate(DepartureBoard(stationCrs, stationName))
+                }
+
+                departureBoard { serviceUid ->
+//                navHostController.navigate()
+                }
             }
-            departureBoard()
         }
     }
 }

@@ -18,7 +18,7 @@ dependencies {
 //    api(projects.core.model)
     api(projects.core.common)
     api(projects.core.network)
-//    api(projects.core.location)
+    api(projects.core.database)
 
     implementation(libs.immutable)
 

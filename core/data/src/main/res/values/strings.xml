@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="approaching_station">Approaching station</string>
+    <string name="arriving_at_station">Arriving at station</string>
+    <string name="at_platform">At platform</string>
+    <string name="preparing_to_depart">Preparing to depart</string>
+    <string name="ready_to_depart">Ready to depart</string>
+    <string name="empty_string" />
+</resources>

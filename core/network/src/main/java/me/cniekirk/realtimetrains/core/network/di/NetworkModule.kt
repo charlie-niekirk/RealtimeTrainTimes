@@ -8,6 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import me.cniekirk.realtimetrains.core.network.apis.HuxleyApi
 import me.cniekirk.realtimetrains.core.network.apis.RealtimeTrainsApi
 import me.cniekirk.realtimetrains.core.network.utils.BasicAuthInterceptor
 import okhttp3.Cache
@@ -17,6 +18,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.time.Duration
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -57,6 +59,7 @@ class NetworkModule {
 
     @Provides
     @Singleton
+    @Named("realtime")
     fun providesRetrofit(okHttpCallFactory: Lazy<Call.Factory>, moshi: Moshi): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://api.rtt.io/api/v1/json/")
@@ -67,5 +70,20 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRealtimeTrainsApi(retrofit: Retrofit): RealtimeTrainsApi = retrofit.create(RealtimeTrainsApi::class.java)
+    @Named("huxley")
+    fun providesHuxleyRetrofit(okHttpCallFactory: Lazy<Call.Factory>, moshi: Moshi): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://huxley2.azurewebsites.net/")
+            .callFactory { okHttpCallFactory.get().newCall(it) }
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRealtimeTrainsApi(@Named("realtime") retrofit: Retrofit): RealtimeTrainsApi = retrofit.create(RealtimeTrainsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideHuxleyApi(@Named("huxley") retrofit: Retrofit): HuxleyApi = retrofit.create(HuxleyApi::class.java)
 }

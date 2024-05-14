@@ -29,8 +29,8 @@ private val easing = Easing {
     PathInterpolatorCompat.create(path).getInterpolation(it)
 }
 
-private val emphasisedIntSpec = tween<IntOffset>(EMPHASISED_DURATION, ANIM_DELAY, easing)
-private val emphasisedFloatSpec = tween<Float>(EMPHASISED_DURATION, ANIM_DELAY, easing)
+val emphasisedIntSpec = tween<IntOffset>(EMPHASISED_DURATION, ANIM_DELAY, easing)
+val emphasisedFloatSpec = tween<Float>(EMPHASISED_DURATION, ANIM_DELAY, easing)
 
 private val emphasisedPopIntSpec = tween<IntOffset>(POP_DURATION, ANIM_DELAY, easing)
 private val emphasisedPopFloatSpec = tween<Float>(POP_DURATION, ANIM_DELAY, easing)

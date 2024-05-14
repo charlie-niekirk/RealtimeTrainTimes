@@ -12,5 +12,5 @@ data class DepartureBoardState(
 
 sealed class DepartureBoardEffect {
 
-    data class NavigateToServiceDetails(val stationName: String) : DepartureBoardEffect()
+    data class NavigateToServiceDetails(val serviceId: String) : DepartureBoardEffect()
 }

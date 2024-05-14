@@ -8,6 +8,7 @@ import me.cniekirk.realtimetrains.core.common.Result
 import me.cniekirk.realtimetrains.core.data.repository.RealtimeTrainsRepository
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -25,7 +26,7 @@ class DepartureBoardViewModel @Inject constructor(
         loadDepartures(args.stationCrs)
     }
 
-    private suspend fun loadDepartures(station: String) = intent {
+    private fun loadDepartures(station: String) = intent {
         when (val response = realtimeTrainsRepository.getDepartureBoard(station)) {
             is Result.Failure -> {
                 reduce {
@@ -44,5 +45,9 @@ class DepartureBoardViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun onServiceClicked(id: String) = intent {
+        postSideEffect(DepartureBoardEffect.NavigateToServiceDetails(id))
     }
 }

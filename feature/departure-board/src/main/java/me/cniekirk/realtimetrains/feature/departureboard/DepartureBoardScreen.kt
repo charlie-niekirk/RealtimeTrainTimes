@@ -1,6 +1,15 @@
 package me.cniekirk.realtimetrains.feature.departureboard
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.with
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,71 +32,113 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import me.cniekirk.realtimetrains.core.data.model.DepartureBoardTrainService
+import me.cniekirk.realtimetrains.core.designsystem.emphasisedFloatSpec
+import me.cniekirk.realtimetrains.core.designsystem.emphasisedIntSpec
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun DepartureBoardScreen(viewModel: DepartureBoardViewModel) {
+fun DepartureBoardScreen(
+    viewModel: DepartureBoardViewModel,
+    navigateToServiceDetails: (String) -> Unit
+) {
     val state = viewModel.collectAsState().value
 
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is DepartureBoardEffect.NavigateToServiceDetails -> {
-
+                navigateToServiceDetails(sideEffect.serviceId)
             }
         }
     }
 
-    DepartureBoardContent(state = state)
+    DepartureBoardContent(
+        state = state,
+        onServiceClicked = viewModel::onServiceClicked
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DepartureBoardContent(state: DepartureBoardState) {
+fun DepartureBoardContent(
+    state: DepartureBoardState,
+    onServiceClicked: (String) -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CenterAlignedTopAppBar(
             title = {
-                Text(text = state.stationName)
+                Text(
+                    text = state.stationName,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Normal
+                )
             }
         )
         AnimatedContent(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
             targetState = state.isLoading,
+            transitionSpec = {
+                fadeIn(animationSpec = emphasisedFloatSpec) + slideInVertically(animationSpec = emphasisedIntSpec,
+                    initialOffsetY = { fullHeight -> fullHeight / 4 }) togetherWith
+                        fadeOut(emphasisedFloatSpec)
+            },
             label = "departure_board_loading_appear_dismiss"
         ) { loading ->
             if (loading) {
-                Spacer(modifier = Modifier.weight(1f))
-                CircularProgressIndicator()
-                Spacer(modifier = Modifier.weight(1f))
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    CircularProgressIndicator()
+                    Spacer(modifier = Modifier.weight(1f))
+                }
             } else {
-                DepartureBoardServices(services = state.services)
+                DepartureBoardServices(
+                    services = state.services,
+                    onServiceClicked = { onServiceClicked(it) }
+                )
             }
         }
     }
 }
 
 @Composable
-fun DepartureBoardServices(services: ImmutableList<DepartureBoardTrainService>) {
+fun DepartureBoardServices(
+    services: ImmutableList<DepartureBoardTrainService>,
+    onServiceClicked: (String) -> Unit
+) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ) {
         items(services) { service ->
-            TrainServiceItem(departureBoardTrainService = service)
+            TrainServiceItem(
+                departureBoardTrainService = service,
+                onServiceClicked = { onServiceClicked(service.id) }
+            )
         }
     }
 }
 
 @Composable
-fun TrainServiceItem(departureBoardTrainService: DepartureBoardTrainService) {
+fun TrainServiceItem(
+    departureBoardTrainService: DepartureBoardTrainService,
+    onServiceClicked: () -> Unit
+) {
     val platform = if (departureBoardTrainService.platformConfirmed) {
         "Platform ${departureBoardTrainService.platform}"
     } else {
         "Platform ${departureBoardTrainService.platform} estimated"
     }
 
-    Column {
+    Column(
+        modifier = Modifier.clickable { onServiceClicked() }
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -96,13 +147,13 @@ fun TrainServiceItem(departureBoardTrainService: DepartureBoardTrainService) {
             Column {
                 Text(
                     text = departureBoardTrainService.destination,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
                     text = platform,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
 

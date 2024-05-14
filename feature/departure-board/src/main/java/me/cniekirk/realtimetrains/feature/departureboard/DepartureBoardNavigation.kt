@@ -14,7 +14,7 @@ data class DepartureBoard(
     val stationName: String
 )
 
-fun NavGraphBuilder.departureBoard() {
+fun NavGraphBuilder.departureBoard(navigateToServiceDetails: (String) -> Unit) {
     composable<DepartureBoard>(
         popEnterTransition = {
             Timber.d(targetState.destination.route)
@@ -26,6 +26,9 @@ fun NavGraphBuilder.departureBoard() {
         }
     ) {
         val viewModel = hiltViewModel<DepartureBoardViewModel>()
-        DepartureBoardScreen(viewModel = viewModel)
+        DepartureBoardScreen(
+            viewModel = viewModel,
+            navigateToServiceDetails = { navigateToServiceDetails(it) }
+        )
     }
 }
