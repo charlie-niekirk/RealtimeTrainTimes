@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="departures">Departures</string>
+    <string name="arrivals">Arrivals</string>
+    <string name="on_time">On Time</string>
+    <string name="arrived_on_time">Arrived On Time</string>
+    <string name="departed_on_time">Departed On Time</string>
+    <string name="platform_format">Platform %1$s</string>
+    <string name="load_more">More trains</string>
+    <string name="cancelled_format">Cancelled due to %1$s</string>
 </resources>

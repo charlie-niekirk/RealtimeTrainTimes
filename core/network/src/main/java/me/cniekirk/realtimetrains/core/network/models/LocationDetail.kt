@@ -16,6 +16,8 @@ data class LocationDetail(
     val displayAs: String?,
     @Json(name = "gbttBookedDeparture")
     val gbttBookedDeparture: String?,
+    @Json(name = "gbttBookedArrival")
+    val gbttBookedArrival: String?,
     @Json(name = "isCall")
     val isCall: Boolean?,
     @Json(name = "isPublicCall")
@@ -34,6 +36,16 @@ data class LocationDetail(
     val realtimeDeparture: String?,
     @Json(name = "realtimeDepartureActual")
     val realtimeDepartureActual: Boolean?,
+    @Json(name = "realtimeArrival")
+    val realtimeArrival: String?,
+    @Json(name = "realtimeArrivalActual")
+    val realtimeArrivalActual: Boolean?,
+    @Json(name = "cancelReasonCode")
+    val cancelReasonCode: String?,
+    @Json(name = "cancelReasonShortText")
+    val cancelReasonShortText: String?,
+    @Json(name = "cancelReasonLongText")
+    val cancelReasonLongText: String?,
     @Json(name = "serviceLocation")
     val serviceLocation: String?,
     @Json(name = "tiploc")

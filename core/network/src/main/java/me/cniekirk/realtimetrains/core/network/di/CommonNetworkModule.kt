@@ -2,7 +2,6 @@ package me.cniekirk.realtimetrains.core.network.di
 
 import android.content.Context
 import com.squareup.moshi.Moshi
-import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,19 +10,19 @@ import dagger.hilt.components.SingletonComponent
 import me.cniekirk.realtimetrains.core.network.apis.HuxleyApi
 import me.cniekirk.realtimetrains.core.network.apis.RealtimeTrainsApi
 import me.cniekirk.realtimetrains.core.network.utils.BasicAuthInterceptor
+import me.cniekirk.realtimetrains.core.network.utils.SingleToArray
 import okhttp3.Cache
 import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import java.time.Duration
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModule {
+class CommonNetworkModule {
 
     @Singleton
     @Provides
@@ -54,34 +53,13 @@ class NetworkModule {
     @Provides
     @Singleton
     fun providesMoshi(): Moshi {
-        return Moshi.Builder().build()
+        return Moshi.Builder().add(SingleToArray.Adapter.FACTORY).build()
     }
 
     @Provides
     @Singleton
-    @Named("realtime")
-    fun providesRetrofit(okHttpCallFactory: Lazy<Call.Factory>, moshi: Moshi): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://api.rtt.io/api/v1/json/")
-            .callFactory { okHttpCallFactory.get().newCall(it) }
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    @Named("huxley")
-    fun providesHuxleyRetrofit(okHttpCallFactory: Lazy<Call.Factory>, moshi: Moshi): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://huxley2.azurewebsites.net/")
-            .callFactory { okHttpCallFactory.get().newCall(it) }
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideRealtimeTrainsApi(@Named("realtime") retrofit: Retrofit): RealtimeTrainsApi = retrofit.create(RealtimeTrainsApi::class.java)
+    fun provideRealtimeTrainsApi(@Named("realtime") retrofit: Retrofit): RealtimeTrainsApi = retrofit.create(
+        RealtimeTrainsApi::class.java)
 
     @Provides
     @Singleton

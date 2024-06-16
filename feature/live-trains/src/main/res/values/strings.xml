@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="live_trains_title">Train times</string>
+    <string name="departing_search_station_container_text">Departing from</string>
+    <string name="departing_filter_station_container_text">Going to</string>
+    <string name="arriving_search_station_container_text">Arriving at</string>
+    <string name="arriving_filter_station_container_text">Coming from (optional)</string>
+    <string name="departing_direction">Departing</string>
+    <string name="arriving_direction">Arriving</string>
+    <string name="search_button">Search</string>
+    <string name="clear">Clear</string>
+    <string name="from">from</string>
+    <string name="to">to</string>
+    <string name="recent_searches_title">Recent searches</string>
+</resources>

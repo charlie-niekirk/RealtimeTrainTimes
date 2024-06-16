@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "337177437693",
+    "project_id": "realtimetrains-a9bd0",
+    "storage_bucket": "realtimetrains-a9bd0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:337177437693:android:206f137cc701878d4f2594",
+        "android_client_info": {
+          "package_name": "me.cniekirk.realtimetrains"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvc25YdEQcHYUjDtZ4r-74m9KoRN4OBqQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:337177437693:android:d5b7b14e85e0a3c34f2594",
+        "android_client_info": {
+          "package_name": "me.cniekirk.realtimetrains.demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvc25YdEQcHYUjDtZ4r-74m9KoRN4OBqQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:337177437693:android:2ea4508cfe7259164f2594",
+        "android_client_info": {
+          "package_name": "me.cniekirk.realtimetrains.prod"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvc25YdEQcHYUjDtZ4r-74m9KoRN4OBqQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

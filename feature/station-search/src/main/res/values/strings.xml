@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="station_search_title">Search for station</string>
+    <string name="station_search_subtitle">You can search by name or code</string>
+    <string name="query_placeholder">e.g. London Waterloo</string>
+</resources>

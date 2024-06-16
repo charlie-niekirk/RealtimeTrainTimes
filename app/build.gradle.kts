@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.realtimetrains.android.application.compose)
     alias(libs.plugins.realtimetrains.android.application.flavors)
     alias(libs.plugins.realtimetrains.android.hilt)
+    alias(libs.plugins.com.google.gms.google.services)
 }
 
 android {
@@ -58,9 +59,11 @@ android {
 
 dependencies {
     implementation(projects.core.designsystem)
+    implementation(projects.core.network)
 
     implementation(projects.feature.liveTrains)
     implementation(projects.feature.departureBoard)
+    implementation(projects.feature.stationSearch)
 
     implementation(libs.androidx.animation)
     implementation(libs.androidx.core.ktx)
@@ -74,6 +77,12 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material3.window.size)
     implementation(libs.androidx.window.window)
+
+    implementation(libs.mock.webserver)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.analytics)
+    implementation(libs.remote.config)
 
     implementation(libs.navigation.compose)
     implementation(libs.hilt.navigation)

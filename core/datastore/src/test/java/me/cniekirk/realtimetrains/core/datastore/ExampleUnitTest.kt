@@ -1,4 +1,4 @@
-package me.cniekirk.realtimetrains.feature.departureboard
+package me.cniekirk.realtimetrains.core.datastore
 
 import org.junit.Test
 

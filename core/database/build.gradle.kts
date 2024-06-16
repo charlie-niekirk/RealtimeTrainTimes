@@ -13,6 +13,10 @@ android {
             isIncludeAndroidResources = true
         }
     }
+
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
 }
 
 dependencies {

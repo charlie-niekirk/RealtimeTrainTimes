@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="late_format">
+        <item quantity="one">%1$d minute late</item>
+        <item quantity="other">%1$d minutes late</item>
+    </plurals>
+    <plurals name="arrived_late_format">
+        <item quantity="one">Arrived %1$d minute late</item>
+        <item quantity="other">Arrived %1$d minutes late</item>
+    </plurals>
+    <plurals name="departed_late_format">
+        <item quantity="one">Departed %1$d minute late</item>
+        <item quantity="other">Departed %1$d minutes late</item>
+    </plurals>
+</resources>

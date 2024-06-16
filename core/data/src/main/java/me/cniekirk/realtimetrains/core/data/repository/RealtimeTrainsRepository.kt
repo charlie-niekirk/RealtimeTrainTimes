@@ -1,9 +1,15 @@
 package me.cniekirk.realtimetrains.core.data.repository
 
+import me.cniekirk.realtimetrains.core.common.Direction
 import me.cniekirk.realtimetrains.core.common.Result
-import me.cniekirk.realtimetrains.core.data.model.DepartureBoard
+import me.cniekirk.realtimetrains.core.data.model.StationBoard
+import me.cniekirk.realtimetrains.core.network.models.huxley.StationCrs
 
 interface RealtimeTrainsRepository {
 
-    suspend fun getDepartureBoard(station: String): Result<DepartureBoard>
+    suspend fun getStationBoard(
+        searchStation: StationCrs,
+        filterStation: StationCrs? = null,
+        direction: Direction
+    ): Result<StationBoard>
 }

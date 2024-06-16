@@ -5,5 +5,10 @@
     <string name="at_platform">At platform</string>
     <string name="preparing_to_depart">Preparing to depart</string>
     <string name="ready_to_depart">Ready to depart</string>
+    <string name="departed">Departed</string>
+    <string name="arrived">Arrived</string>
+    <string name="estimated">Estimated</string>
+    <string name="confirmed">Confirmed</string>
+    <string name="no_platform">No platform information</string>
     <string name="empty_string" />
 </resources>

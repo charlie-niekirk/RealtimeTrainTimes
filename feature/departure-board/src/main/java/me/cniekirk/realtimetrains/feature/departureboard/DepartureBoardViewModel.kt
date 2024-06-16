@@ -4,8 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import me.cniekirk.realtimetrains.core.common.Direction
 import me.cniekirk.realtimetrains.core.common.Result
 import me.cniekirk.realtimetrains.core.data.repository.RealtimeTrainsRepository
+import me.cniekirk.realtimetrains.core.network.models.huxley.StationCrs
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -21,13 +23,28 @@ class DepartureBoardViewModel @Inject constructor(
 
     private val args = savedStateHandle.toRoute<DepartureBoard>()
 
-    override val container = container<DepartureBoardState, DepartureBoardEffect>(DepartureBoardState(stationName = args.stationName)) {
-        // Load departure board
-        loadDepartures(args.stationCrs)
+    override val container = container<DepartureBoardState, DepartureBoardEffect>(
+        DepartureBoardState(
+            stationName = args.searchStationName,
+            direction = if (args.isDeparting) Direction.DEPARTING else Direction.ARRIVING
+        )
+    ) {
+        // Load station board
+        loadStationBoard(
+            StationCrs(args.searchStationCrs, args.searchStationName),
+            if (args.filterStationCrs != null && args.filterStationName != null) {
+                StationCrs(args.filterStationCrs, args.filterStationName)
+            } else null,
+            if (args.isDeparting) Direction.DEPARTING else Direction.ARRIVING
+        )
     }
 
-    private fun loadDepartures(station: String) = intent {
-        when (val response = realtimeTrainsRepository.getDepartureBoard(station)) {
+    private fun loadStationBoard(
+        searchStation: StationCrs,
+        filterStation: StationCrs?,
+        direction: Direction
+    ) = intent {
+        when (val response = realtimeTrainsRepository.getStationBoard(searchStation, filterStation, direction)) {
             is Result.Failure -> {
                 reduce {
                     state.copy(
@@ -40,7 +57,7 @@ class DepartureBoardViewModel @Inject constructor(
                 reduce {
                     state.copy(
                         isLoading = false,
-                        services = response.data.services
+                        stationBoard = response.data
                     )
                 }
             }

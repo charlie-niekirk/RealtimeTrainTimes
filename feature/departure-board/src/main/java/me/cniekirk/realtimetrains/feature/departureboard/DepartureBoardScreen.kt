@@ -1,37 +1,41 @@
 package me.cniekirk.realtimetrains.feature.departureboard
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.with
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import me.cniekirk.realtimetrains.core.common.Direction
+import me.cniekirk.realtimetrains.core.data.model.ArrivalBoardTrainService
 import me.cniekirk.realtimetrains.core.data.model.DepartureBoardTrainService
+import me.cniekirk.realtimetrains.core.data.model.StationBoard
+import me.cniekirk.realtimetrains.core.data.model.TimeStatus
 import me.cniekirk.realtimetrains.core.designsystem.emphasisedFloatSpec
 import me.cniekirk.realtimetrains.core.designsystem.emphasisedIntSpec
 import org.orbitmvi.orbit.compose.collectAsState
@@ -58,28 +62,37 @@ fun DepartureBoardScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DepartureBoardContent(
     state: DepartureBoardState,
     onServiceClicked: (String) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface),
     ) {
-        CenterAlignedTopAppBar(
-            title = {
-                Text(
-                    text = state.stationName,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+        val heading = when (state.direction) {
+            Direction.DEPARTING -> stringResource(id = R.string.departures)
+            Direction.ARRIVING -> stringResource(id = R.string.arrivals)
+        }
+
+        Text(
+            modifier = Modifier.padding(start = 16.dp, top = 32.dp),
+            text = state.stationName,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Normal
         )
+
+        Text(
+            modifier = Modifier.padding(start = 16.dp, top = 4.dp),
+            text = heading,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        )
+
         AnimatedContent(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = 16.dp)
                 .weight(1f),
             targetState = state.isLoading,
             transitionSpec = {
@@ -99,10 +112,23 @@ fun DepartureBoardContent(
                     Spacer(modifier = Modifier.weight(1f))
                 }
             } else {
-                DepartureBoardServices(
-                    services = state.services,
-                    onServiceClicked = { onServiceClicked(it) }
-                )
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    when (val board = state.stationBoard) {
+                        is StationBoard.ArrivalBoard -> {
+                            ArrivalBoardServices(services = board.services) {
+                                onServiceClicked(it)
+                            }
+                        }
+                        is StationBoard.DepartureBoard -> {
+                            DepartureBoardServices(services = board.services) {
+                                onServiceClicked(it)
+                            }
+                        }
+                        null -> {}
+                    }
+                }
             }
         }
     }
@@ -116,28 +142,188 @@ fun DepartureBoardServices(
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ) {
-        items(services) { service ->
-            TrainServiceItem(
+        items(services, contentType = { it.contentType }) { service ->
+            DepartureTrainServiceItem(
                 departureBoardTrainService = service,
                 onServiceClicked = { onServiceClicked(service.id) }
             )
+        }
+        item {
+            // Load more trains item
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                OutlinedButton(onClick = { /*TODO*/ }) {
+                    Text(
+                        text = stringResource(id = R.string.load_more)
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+            }
         }
     }
 }
 
 @Composable
-fun TrainServiceItem(
+fun ArrivalBoardServices(
+    services: ImmutableList<ArrivalBoardTrainService>,
+    onServiceClicked: (String) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        items(services, contentType = { it.contentType }) { service ->
+            ArrivalTrainServiceItem(
+                arrivalBoardTrainService = service,
+                onServiceClicked = { onServiceClicked(service.id) }
+            )
+        }
+        item {
+            // Load more trains item
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                OutlinedButton(onClick = { /*TODO*/ }) {
+                    Text(
+                        text = stringResource(id = R.string.load_more)
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+fun DepartureTrainServiceItem(
     departureBoardTrainService: DepartureBoardTrainService,
     onServiceClicked: () -> Unit
 ) {
-    val platform = if (departureBoardTrainService.platformConfirmed) {
-        "Platform ${departureBoardTrainService.platform}"
-    } else {
-        "Platform ${departureBoardTrainService.platform} estimated"
-    }
+    val modifier = if (departureBoardTrainService.hasDeparted) {
+        Modifier
+            .background(color = MaterialTheme.colorScheme.secondaryContainer)
+    } else Modifier
 
     Column(
-        modifier = Modifier.clickable { onServiceClicked() }
+        modifier = modifier.clickable { onServiceClicked() }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+        ) {
+            Column {
+                val scheduledStyle = when (departureBoardTrainService.timeStatus) {
+                    is TimeStatus.Late -> MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough)
+                    is TimeStatus.OnTime, is TimeStatus.Cancelled -> MaterialTheme.typography.bodyMedium
+                }
+
+                Text(
+                    text = departureBoardTrainService.scheduledDepartureTime,
+                    style = scheduledStyle,
+                    fontWeight = FontWeight.Bold
+                )
+
+                if (departureBoardTrainService.timeStatus is TimeStatus.Late) {
+                    Text(
+                        modifier = Modifier.padding(top = 2.dp),
+                        text = departureBoardTrainService.realtimeDepartureTime,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column {
+                Text(
+                    text = departureBoardTrainService.trainOperator,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color(departureBoardTrainService.trainOperatorColor)
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = departureBoardTrainService.destination,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                val timeString = when (val status = departureBoardTrainService.timeStatus) {
+                    is TimeStatus.Late -> {
+                        if (departureBoardTrainService.hasDeparted) {
+                            pluralStringResource(id = R.plurals.departed_late_format, count = status.minutes, status.minutes)
+                        } else {
+                            pluralStringResource(id = R.plurals.late_format, count = status.minutes, status.minutes)
+                        }
+                    }
+                    is TimeStatus.OnTime -> {
+                        if (departureBoardTrainService.hasDeparted) {
+                            stringResource(id = R.string.departed_on_time)
+                        } else {
+                            stringResource(id = R.string.on_time)
+                        }
+                    }
+                    is TimeStatus.Cancelled -> {
+                        stringResource(id = R.string.cancelled_format, status.reason)
+                    }
+                }
+
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = timeString,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (departureBoardTrainService.timeStatus is TimeStatus.Cancelled) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Column(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = stringResource(id = R.string.platform_format, departureBoardTrainService.platform),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = if (departureBoardTrainService.platformConfirmed) FontWeight.Bold else FontWeight.Normal
+                )
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = stringResource(id = departureBoardTrainService.trainLocation.status),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+
+        HorizontalDivider()
+    }
+}
+
+@Composable
+fun ArrivalTrainServiceItem(
+    arrivalBoardTrainService: ArrivalBoardTrainService,
+    onServiceClicked: () -> Unit
+) {
+    val modifier = if (arrivalBoardTrainService.hasArrived) {
+        Modifier
+            .background(color = MaterialTheme.colorScheme.secondaryContainer)
+    } else Modifier
+
+    Column(
+        modifier = modifier.clickable { onServiceClicked() }
     ) {
         Row(
             modifier = Modifier
@@ -145,25 +331,92 @@ fun TrainServiceItem(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
             Column {
+                val scheduledStyle = when (arrivalBoardTrainService.timeStatus) {
+                    is TimeStatus.Late -> MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough)
+                    is TimeStatus.OnTime, is TimeStatus.Cancelled -> MaterialTheme.typography.bodyMedium
+                }
+
                 Text(
-                    text = departureBoardTrainService.destination,
+                    text = arrivalBoardTrainService.scheduledArrivalTime,
+                    style = scheduledStyle,
+                    fontWeight = FontWeight.Bold
+                )
+
+                if (arrivalBoardTrainService.timeStatus is TimeStatus.Late) {
+                    Text(
+                        modifier = Modifier.padding(top = 2.dp),
+                        text = arrivalBoardTrainService.realtimeArrivalTime,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column {
+                Text(
+                    text = arrivalBoardTrainService.trainOperator,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color(arrivalBoardTrainService.trainOperatorColor)
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = arrivalBoardTrainService.origin,
                     style = MaterialTheme.typography.bodyMedium
                 )
+
+                val timeString = when (val status = arrivalBoardTrainService.timeStatus) {
+                    is TimeStatus.Late -> {
+                        if (arrivalBoardTrainService.hasArrived) {
+                            pluralStringResource(id = R.plurals.arrived_late_format, count = status.minutes, status.minutes)
+                        } else {
+                            pluralStringResource(id = R.plurals.late_format, count = status.minutes, status.minutes)
+                        }
+                    }
+                    is TimeStatus.OnTime -> {
+                        if (arrivalBoardTrainService.hasArrived) {
+                            stringResource(id = R.string.arrived_on_time)
+                        } else {
+                            stringResource(id = R.string.on_time)
+                        }
+                    }
+                    is TimeStatus.Cancelled -> {
+                        stringResource(id = R.string.cancelled_format, status.reason)
+                    }
+                }
+
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
-                    text = platform,
+                    text = timeString,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = if (arrivalBoardTrainService.timeStatus is TimeStatus.Cancelled) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    }
                 )
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Text(
-                text = departureBoardTrainService.realtimeDepartureTime,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold
-            )
+            Column(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = stringResource(id = R.string.platform_format, arrivalBoardTrainService.platform),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = if (arrivalBoardTrainService.platformConfirmed) FontWeight.Bold else FontWeight.Normal
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = stringResource(id = arrivalBoardTrainService.trainLocation.status),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
 
         HorizontalDivider()

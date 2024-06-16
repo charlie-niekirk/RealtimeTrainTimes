@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.moshi)
     implementation(libs.logging.interceptor)
+    implementation(libs.mock.webserver)
 
     implementation(libs.moshi)
     implementation(libs.moshi.adapters)

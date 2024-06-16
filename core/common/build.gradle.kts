@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.realtimetrains.android.library)
     alias(libs.plugins.realtimetrains.android.hilt)
+    alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
 }
 
 android {
@@ -8,4 +9,5 @@ android {
 }
 
 dependencies {
+    implementation(libs.org.jetbrains.kotlinx.serialization)
 }

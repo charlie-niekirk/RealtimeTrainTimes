@@ -3,6 +3,7 @@ package me.cniekirk.realtimetrains.core.network.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import me.cniekirk.realtimetrains.core.network.utils.SingleToArray
 
 @JsonClass(generateAdapter = true)
 data class Location(
@@ -15,5 +16,6 @@ data class Location(
     @Json(name = "system")
     val system: String?,
     @Json(name = "tiploc")
-    val tiploc: List<String?>?
+    @SingleToArray
+    val tiploc: List<String>
 )

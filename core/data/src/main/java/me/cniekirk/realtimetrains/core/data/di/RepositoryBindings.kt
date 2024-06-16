@@ -6,6 +6,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.cniekirk.realtimetrains.core.data.repository.CrsRepository
 import me.cniekirk.realtimetrains.core.data.repository.CrsRepositoryImpl
+import me.cniekirk.realtimetrains.core.data.repository.LocalRepository
+import me.cniekirk.realtimetrains.core.data.repository.LocalRepositoryImpl
 import me.cniekirk.realtimetrains.core.data.repository.RealtimeTrainsRepository
 import me.cniekirk.realtimetrains.core.data.repository.RealtimeTrainsRepositoryImpl
 
@@ -18,4 +20,7 @@ internal interface RepositoryBindings {
 
     @Binds
     fun bindsCrsRepository(crsRepositoryImpl: CrsRepositoryImpl): CrsRepository
+
+    @Binds
+    fun bindsLocalRepository(localRepositoryImpl: LocalRepositoryImpl): LocalRepository
 }

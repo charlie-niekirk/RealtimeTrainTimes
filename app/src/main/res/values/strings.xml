@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Realtime Train Times</string>
+
+    <string name="live_trains">Live Trains</string>
+    <string name="planner">Planner</string>
+    <string name="settings">Settings</string>
 </resources>
