@@ -64,6 +64,7 @@ dependencies {
     implementation(projects.feature.liveTrains)
     implementation(projects.feature.departureBoard)
     implementation(projects.feature.stationSearch)
+    implementation(projects.feature.serviceDetails)
 
     implementation(libs.androidx.animation)
     implementation(libs.androidx.core.ktx)

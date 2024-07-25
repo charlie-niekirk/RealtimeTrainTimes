@@ -34,6 +34,7 @@
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/departure-board" />
             <option value="$PROJECT_DIR$/feature/live-trains" />
+            <option value="$PROJECT_DIR$/feature/service-details" />
             <option value="$PROJECT_DIR$/feature/station-search" />
           </set>
         </option>

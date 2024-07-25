@@ -45,6 +45,11 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("orbit.compose").get())
                 add("implementation", libs.findLibrary("orbit.viewmodel").get())
                 add("testImplementation", libs.findLibrary("orbit.test").get())
+
+                add("testImplementation", libs.findLibrary("mockk").get())
+                add("testImplementation", libs.findLibrary("navigation.testing").get())
+                add("testImplementation", libs.findLibrary("androidx.junit.ext").get())
+                add("testImplementation", libs.findLibrary("robolectric").get())
 //                add("implementation", libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
 //                add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
             }

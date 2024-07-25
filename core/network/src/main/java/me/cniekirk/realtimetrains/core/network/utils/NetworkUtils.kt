@@ -8,10 +8,13 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Types
 import me.cniekirk.realtimetrains.core.common.Error
 import me.cniekirk.realtimetrains.core.common.Result
+import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 import java.io.IOException
 import java.lang.reflect.Type
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import javax.annotation.Nullable
 
 
@@ -22,20 +25,25 @@ suspend fun <T : Any> safeApiCall(call: suspend () -> Response<T>): Result<T> {
             Result.Success(response.body()!!)
         } else {
             if (response.code() == 400) {
-                Result.Failure(Error.UnknownError)
+                Result.Failure(Error.RequestError)
             } else if (response.code() == 401) {
-                Result.Failure(Error.UnknownError)
+                Result.Failure(Error.AuthError)
             } else if (response.code() in 400..499) {
-                Result.Failure(Error.UnknownError)
+                Result.Failure(Error.CallFailed)
             } else if (response.code() in 500..599) {
-                Result.Failure(Error.UnknownError)
+                Result.Failure(Error.ServerError)
             } else {
                 Result.Failure(Error.UnknownError)
             }
         }
     } catch (error: Throwable) {
         Timber.e(error)
-        Result.Failure(Error.UnknownError)
+        when (error) {
+            is SocketTimeoutException -> Result.Failure(Error.Timeout)
+            is HttpException -> Result.Failure(Error.ServerError)
+            is UnknownHostException -> Result.Failure(Error.CallFailed)
+            else -> Result.Failure(Error.UnknownError)
+        }
     }
 }
 

@@ -19,8 +19,12 @@ class CrsRepositoryImpl @Inject constructor(
         var stations = trainStationDao.getAll()
         if (stations.isEmpty()) {
             when (val response = safeApiCall { huxleyApi.getAllStations() }) {
-                is Result.Failure -> return response
+                is Result.Failure -> {
+                    println("Failed")
+                    return response
+                }
                 is Result.Success -> {
+                    println("Passed")
                     trainStationDao.insertAll(
                         *response.data.map {
                             TrainStation(stationCrs = it.crsCode, stationName = it.stationName)

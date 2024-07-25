@@ -1,6 +1,7 @@
 package me.cniekirk.realtimetrains.core.network.apis
 
 import me.cniekirk.realtimetrains.core.network.models.LocationLineUp
+import me.cniekirk.realtimetrains.core.network.models.ServiceDetails
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -44,4 +45,12 @@ interface RealtimeTrainsApi {
         @Path("day") day: String,
         @Path("time") time: String
     ): Response<LocationLineUp>
+
+    @GET("service/{serviceUid}/{year}/{month}/{day}")
+    suspend fun getServiceDetails(
+        @Path("serviceUid") serviceUid: String,
+        @Path("year") year: String,
+        @Path("month") month: String,
+        @Path("day") day: String,
+    ): Response<ServiceDetails>
 }

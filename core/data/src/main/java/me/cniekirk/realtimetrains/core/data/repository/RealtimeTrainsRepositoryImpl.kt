@@ -10,6 +10,7 @@ import me.cniekirk.realtimetrains.core.data.mapper.toDepartureBoard
 import me.cniekirk.realtimetrains.core.data.model.StationBoard
 import me.cniekirk.realtimetrains.core.datastore.RecentSearchesDataSource
 import me.cniekirk.realtimetrains.core.network.apis.RealtimeTrainsApi
+import me.cniekirk.realtimetrains.core.network.models.ServiceDetails
 import me.cniekirk.realtimetrains.core.network.models.huxley.StationCrs
 import me.cniekirk.realtimetrains.core.network.utils.safeApiCall
 import java.time.LocalDateTime
@@ -30,6 +31,17 @@ class RealtimeTrainsRepositoryImpl @Inject constructor(
             DEPARTING -> getDepartures(searchStation, filterStation, dateTime)
             ARRIVING -> getArrivals(searchStation, filterStation, dateTime)
         }
+    }
+
+    override suspend fun getServiceDetails(serviceUid: String): Result<ServiceDetails> {
+        val dateTime = LocalDateTime.now()
+        val month = if (dateTime.monthValue < 10) {
+            "0${dateTime.monthValue}"
+        } else {
+            dateTime.monthValue.toString()
+        }
+
+        return safeApiCall { realtimeTrainsApi.getServiceDetails(serviceUid, dateTime.year.toString(), month, dateTime.dayOfMonth.toString()) }
     }
 
     private suspend fun getDepartures(

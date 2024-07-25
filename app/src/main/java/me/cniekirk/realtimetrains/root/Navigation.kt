@@ -30,6 +30,8 @@ import me.cniekirk.realtimetrains.feature.departureboard.DepartureBoard
 import me.cniekirk.realtimetrains.feature.departureboard.departureBoard
 import me.cniekirk.realtimetrains.feature.livetrains.LiveTrains
 import me.cniekirk.realtimetrains.feature.livetrains.liveTrains
+import me.cniekirk.realtimetrains.feature.servicedetails.ServiceDetails
+import me.cniekirk.realtimetrains.feature.servicedetails.serviceDetails
 import me.cniekirk.realtimetrains.feature.stationsearch.StationSearch
 import me.cniekirk.realtimetrains.feature.stationsearch.stationSearch
 import kotlin.reflect.KClass
@@ -152,7 +154,13 @@ fun RealTimeTrainsNavHost(navHostController: NavHostController) {
 
                 departureBoard(
                     animationRoute = LiveTrains::class,
-                    navigateToServiceDetails = {}
+                    navigateToServiceDetails = {
+                        navHostController.navigate(ServiceDetails(it))
+                    }
+                )
+
+                serviceDetails(
+                    animationRoute = DepartureBoard::class
                 )
             }
         }

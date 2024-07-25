@@ -4,16 +4,10 @@ plugins {
 }
 
 android {
-    namespace = "me.cniekirk.realtimetrains.feature.departureboard"
+    namespace = "me.cniekirk.realtimetrains.feature.servicedetails"
 
     kotlinOptions {
         freeCompilerArgs = listOf("-Xcontext-receivers")
-    }
-
-    testOptions {
-        unitTests {
-            isReturnDefaultValues = true
-        }
     }
 }
 

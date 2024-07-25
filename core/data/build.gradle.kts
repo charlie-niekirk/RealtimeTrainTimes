@@ -32,4 +32,5 @@ dependencies {
     implementation(libs.paging)
 
     testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockk)
 }
